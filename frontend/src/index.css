@@ -214,6 +214,18 @@
     align-items: center;
     justify-content: center;
     margin-right: 11px;
+    /* left: 250px; */
+    /* background: var(--bg-third); */
+  } 
+  .smallcircle {
+    position: relative;
+    height: 55px;
+    width: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 11px;
     left: 250px;
     /* background: var(--bg-third); */
   } 

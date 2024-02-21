@@ -4,7 +4,7 @@ import Moment from "react-moment";
 // import { Dots, Public } from "../../svg";
 
 import ReactsPopup from "./ReactsPopup";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import CreateComment from "./CreateComment";
 import PostMenu from "./PostMenu";
 import { getReacts, reactPost } from "../../functions/post";
@@ -109,7 +109,7 @@ export default function Post({ post, user, profile }) {
   const showmore = () => {
     setCount((prev) => (prev = prev + 3));
   };
-
+  const postRef = useRef(null);
   return (
     <div
       className={`post ${isInView ? "animate-slide-in" : ""}`}
@@ -315,16 +315,17 @@ export default function Post({ post, user, profile }) {
         )}
       </div>
 
-      {/* {showMenu && (
+      {showMenu && (
         <PostMenu
           userId={user.id}
           postUserId={post.user._id}
           imagesLength={post?.images?.length}
           setShowMenu={setShowMenu}
           images={post.images}
-
+          postRef={postRef}
+          postId={post._Id}
         />
-      )} */}
+      )}
     </div>
   );
 }

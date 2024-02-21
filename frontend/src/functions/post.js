@@ -5,7 +5,8 @@ export const createPost = async (
   text,
   images,
   user,
-  token
+  token,
+  postId
 ) => {
   try {
     const { data } = await axios.post(
@@ -75,6 +76,22 @@ export const comment = async (postId, comment, image, token) => {
       {
         postId, comment, image
       },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return data;
+  } catch (error) {
+    return error.response.data.message;
+  }
+};
+export const deletePost = async (postId, token) => {
+  try {
+    const { data } = await axios.delete(
+      `api1/deletePost/${postId}`,
+
       {
         headers: {
           Authorization: `Bearer ${token}`,

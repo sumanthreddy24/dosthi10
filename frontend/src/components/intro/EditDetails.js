@@ -19,7 +19,7 @@ export default function EditDetails({
         <div className="box_header">
          
           <span>Edit Details</span>
-          <div className="small_circle" onClick={() => setVisible(false)}>
+          <div className="smallcircle" onClick={() => setVisible(false)}>
             <CloseIcon />
           </div>
          <br /><br />
