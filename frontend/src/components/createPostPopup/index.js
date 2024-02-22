@@ -134,8 +134,8 @@ export default function CreatePostPopup({ user, setVisible, posts, dispatch, pro
               user={user}
               setText={setText}
               showPrev={showPrev}
-              setBackground={setBackground}
-              background={background}
+              // setBackground={setBackground}
+              // background={background}
             />
           </>
         ) : (

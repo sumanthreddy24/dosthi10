@@ -109,13 +109,13 @@ export default function EmojiPickerBackgrounds({
           </div>
         )}
 
-        {/* <i
+        <i
           className={`emoji_icon_large ${type2 ? "moveleft" : ""}`}
           onClick={() => {
             setPicker((prev) => !prev);
           }}
 
-        ></i> */}
+        ></i>
          <InsertEmoticonIcon onClick={() => {
             setPicker((prev) => !prev);
           }}/> 

@@ -129,41 +129,48 @@ function Messenger({user}) {
   // Send message to the backend
   const handleSendMessage = async (e) => {
     e.preventDefault();
-
+  
+    // Trim the text to remove leading and trailing whitespaces
+    const trimmedText = text.trim();
+  
+    // Check if the message is empty after trimming
+    if (!trimmedText) {
+      // If the message is empty, display an error message
+      alert("Message cannot be empty");
+      return; // Return early without sending the message
+    }
+  
     const inputs = {
       conversationId: currentChat._id,
       senderId: user._id,
-      text: text,
+      text: trimmedText, // Use the trimmed text
     };
-
-    // const receiverId = currentChat.members.find((member) => member !== user._id);
+  
     const receiverUser = currentChat.members.find(
       (member) => member._id !== user._id
     );
     const receiverId = receiverUser._id;
-    // console.log({ receiverUser });
-
+  
     const datas = {
-      // senderId: user._id,
       senderUser: user,
       receiverId: receiverId,
-      text: text,
+      text: trimmedText, // Use the trimmed text
     };
-
+  
     socket.current.emit("sendMessage", datas);
-
+  
     try {
       setLoading(true);
       setText("");
-      const res =await axios.post(
-                `/api1/newMessage/`,inputs,
-                {
-                  headers: {
-                    Authorization: `Bearer ${user.token}`,
-                  },
-                }
-              );     
-              //  console.log(res.data)
+      const res = await axios.post(
+        `/api1/newMessage/`,
+        inputs,
+        {
+          headers: {
+            Authorization: `Bearer ${user.token}`,
+          },
+        }
+      );
       setMessages((prev) => [...prev, res.data]);
     } catch (err) {
       console.log(err);
@@ -171,6 +178,7 @@ function Messenger({user}) {
       setLoading(false);
     }
   };
+  
 
   // Scroll to the last message
   useEffect(() => {

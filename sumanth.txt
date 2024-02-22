@@ -1,107 +1,216 @@
-import { useRef, useState } from "react";
-import MenuItem from "./MenuItem";
-import useOnClickOutside from "../../helpers/clickOutside";
-// import { deletePost, savePost } from "../../functions/post";
-import { saveAs } from "file-saver";
+import { useEffect, useRef, useState } from "react";
+import Picker from "emoji-picker-react";
+import { comment } from "../../functions/post";
+import SendIcon from "@mui/icons-material/Send";
+import dataURItoBlob from "../../helpers/dataURItoBlob";
+import { uploadImages } from "../../functions/uploadImages";
+import CancelIcon from "@mui/icons-material/Cancel";
+import { ClockLoader } from "react-spinners";
+import Tooltip from "@mui/material/Tooltip";
+import Comments from "./Comments";
+import "./smile.png";
 
-export default function PostMenu({
-  postUserId,
-  userId,
-  imagesLength,
-  setShowMenu,
-  token,
-  postId,
-  checkSaved,
-  setCheckSaved,
-  images,
-  postRef,
-}) {
-  const [test, setTest] = useState(postUserId === userId ? true : false);
-  const menu = useRef(null);
-  useOnClickOutside(menu, () => setShowMenu(false));
-  // const saveHandler = async () => {
-  //   savePost(postId, token);
-  //   if (checkSaved) {
-  //     setCheckSaved(false);
-  //   } else {
-  //     setCheckSaved(true);
-  //   }
-  // };
-  const downloadImages = async () => {
-    images.map((img) => {
-      saveAs(img.url, "image.jpg");
-    });
+export default function CreateComment({ user, postId, setComments, setCount }) {
+  const [showPicker, setShowPicker] = useState(false);
+  const [text, setText] = useState("");
+  const [error, setError] = useState("");
+  const [commentImage, setCommentImage] = useState("");
+  const [cursor, setCursor] = useState();
+  const [loading, setLoading] = useState(false);
+  const [commentBoxValue, setCommentBoxValue] = useState('');
+  // const [setShowEmojis, setShowEmojis] = useState();
+
+  const textRef = useRef(null);
+  useEffect(() => {
+    textRef.current.selectionEnd = cursor;
+  }, [cursor]);
+  const imgInput = useRef(null);
+
+  // emoji handler
+  const handleEmoji = ({ emoji }) => {
+    const ref = textRef.current;
+    ref.focus();
+    const start = text.substring(0, ref.selectionStart);
+    const end = text.substring(ref.selectionStart);
+    const newText = start + emoji + end;
+    setText(newText);
+    setCursor(start.length + emoji.length);
   };
-  // const deleteHandler = async () => {
-  //   const res = await deletePost(postId, token);
-  //   if (res.status === "ok") {
-  //     postRef.current.remove();
-  //   }
-  // };
+  // const handleshowEmojis = () => {
+  //   inputRef.current.focus();
+  //   setShowEmojis(!setShowEmojis);
+  // }
+  const onEmojiSelect = (event, emojiObject) => {
+    setCommentBoxValue(commentBoxValue + emojiObject.emoji);
+    setShowPicker(false);
+  };
+
+
+  const onKeyDownHandler = (e) => {
+    if (e.key === "Enter")
+      handleComment()
+  }
+  // comment Image handler
+  const handleImage = (e) => {
+    let file = e.target.files[0];
+    // if (
+    //   file.type !== "image/jpeg" &&
+    //   file.type !== "image/png" &&
+    //   file.type !== "image/webp" &&
+    //   file.type !== "image/gif"
+    // ) {
+    //   setError(`${file.name} format is not supported.`);
+    //   return;
+    // } else if (file.size > 1024 * 1024 * 5) {
+    //   setError(`${file.name} is too large max 5mb allowed.`);
+    //   return;
+    // }
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = (event) => {
+      setCommentImage(event.target.result);
+    };
+  };
+
+  // total comment handler including img(emoji,image),text,em
+  const handleComment = async (e) => {
+    if (commentImage !== "") {
+      setLoading(true);
+
+      const img = dataURItoBlob(commentImage);
+      const path = `${user.username}/post_images/${postId}`;
+      let formData = new FormData();
+      formData.append("path", path);
+      formData.append("file", img);
+      const imgComment = await uploadImages(formData, path, user.token);
+      console.log(imgComment);
+      console.log(imgComment[0]);
+
+      const newComment = await comment(
+        postId,
+        text,
+        imgComment[0].url,
+        user.token
+      );
+
+      // setComments(newComment)
+      setCount((prev) => ++prev);
+      setLoading(false);
+      setText("");
+      setCommentImage("");
+      console.log(newComment);
+    } else {
+      setLoading(true);
+
+      const newComment = await comment(postId, text, "", user.token);
+      // setComments(newComment)
+      setCount((prev) => ++prev);
+      setLoading(false);
+      setText("");
+      setCommentImage("");
+      console.log(newComment);
+    }
+  };
+  const handleCommentCancel = () => {
+    setText("");
+    setCommentImage("");
+  };
+
   return (
-    <ul className="post_menu" ref={menu}>
-      {test && <MenuItem icon="pin_icon" title="Pin Post" />}
-      {/* <div onClick={() => saveHandler()}>
-        {checkSaved ? (
-          <MenuItem
-            icon="save_icon"
-            title="Unsave Post"
-            subtitle="Remove this from your saved items."
+    <div className="create_comment_wrap">
+      <div className="create_comment_1">
+        <img src={user?.picture} alt="" />
+        <div className="create_comment_1_comment_input_wrap">
+        {showPicker && (
+            <div className="comment_emoji_picker">
+              <Picker onEmojiClick={handleEmoji} />
+            </div>
+          )}
+          <input
+            type="file"
+            hidden
+            ref={imgInput}
+            accept="image/jpeg,image/png,image/gif,image/webp"
+            onChange={handleImage}
           />
-        ) : (
-          <MenuItem
-            icon="save_icon"
-            title="Save Post"
-            subtitle="Add this to your saved items."
+          {error && (
+            <div className="postError comment_error">
+              <div className="postError_error">{error}</div>
+              <button className="blue_btn" onClick={() => setError("")}>
+                Try again
+              </button>
+            </div>
+          )}
+          <input
+            type="text"
+            ref={textRef}
+            value={text}
+            onKeyDown={onKeyDownHandler}
+            placeholder="Write a comment..."
+            onChange={(e) => setText(e.target.value)}
           />
-        )}
-      </div> */}
-      <div className="line"></div>
-      {test && <MenuItem icon="edit_icon" title="Edit Post" />}
-      {!test && (
-        <MenuItem
-          icon="turnOnNotification_icon"
-          title="Turn on notifications for this post"
-        />
-      )}
-      {imagesLength && (
-        <div onClick={() => downloadImages()}>
-          <MenuItem icon="download_icon" title="Download" />
+
+          <ClockLoader color="black" size={20} loading={loading} />
+        </div>
+        <div>
+          <img 
+            className="emoji-icon"
+            src={require("./smile.png")}
+            alt="icon"
+            onClick={() => setShowPicker(val => !val)}
+          />    
+            {<showPicker 
+              pickerStyle={{ width: '200%' }} 
+              // Additional props for the EmojiPicker component
+            />}
+        </div>
+      </div>
+      <div className="create_comment_2">
+        <div className="create_comment_2_left">
+          <div
+            className="comment_circle_icon hover2"
+            onClick={() => {
+              showPicker((prev) => !prev);
+            }}
+          >
+            <i className="emoji_icon"></i>
+          </div>
+          <div
+            className="comment_circle_icon hover2"
+            onClick={() => imgInput.current.click()}
+          >
+            <i className="camera_icon"></i>
+          </div>
+        </div>
+        <div className="create_comment_2_right">
+          <div
+            className="comment_circle_icon hover2"
+            onClick={handleCommentCancel}
+          >
+            <Tooltip title="cancel">
+              <CancelIcon fontSize="small" />
+            </Tooltip>
+          </div>
+
+          <div className="comment_circle_icon hover2" onClick={handleComment}>
+            <Tooltip title="comment">
+              <SendIcon fontSize="small" />
+            </Tooltip>
+          </div>
+        </div>
+      </div>
+
+      {commentImage && (
+        <div className="comment_img_preview">
+          <img src={commentImage} alt="" />
+          <div
+            className="small_white_circle"
+            onClick={() => setCommentImage("")}
+          >
+            <i className="exit_icon"></i>
+          </div>
         </div>
       )}
-      {imagesLength && (
-        <MenuItem icon="fullscreen_icon" title="Enter Fullscreen" />
-      )}
-      {test && <MenuItem img="../../../icons/lock.png" title="Edit audience" />}
-      {test && (
-        <MenuItem
-          icon="turnOffNotifications_icon"
-          title="Turn off notifications for this post"
-        />
-      )}
-      {test && <MenuItem icon="delete_icon" title="Turn off translations" />}
-      {test && <MenuItem icon="date_icon" title="Edit Date" />}
-      {test && (
-        <MenuItem icon="refresh_icon" title="Refresh share attachment" />
-      )}
-      {test && <MenuItem icon="archive_icon" title="Move to archive" />}
-      {/* {test && (
-        <div onClick={() => deleteHandler()}>
-          <MenuItem
-            icon="trash_icon"
-            title="Move to trash"
-            subtitle="items in your trash are deleted after 30 days"
-          />
-        </div>
-      )} */}
-      {!test && <div className="line"></div>}
-      {!test && (
-        <MenuItem
-          img="../../../icons/report.png"
-          title="Report post"
-          subtitle="i'm concerned about this post"
-        />
-      )}
-    </ul>
+    </div>
   );
 }

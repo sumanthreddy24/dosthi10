@@ -83,6 +83,11 @@
 .box_privacy span {
   margin-bottom: 1px;
 }
+
+.images_input {
+  display: flex;
+}
+
 .flex_center {
   min-height: 90px;
   position: relative;
@@ -115,23 +120,35 @@
   display: flex;
   align-items: flex-end;
   justify-content: space-between;
-  padding: 10px 15px;
+  padding: 3px 5px;
 }
+
 .post_emojis_wrap img {
   width: 39px;
   cursor: pointer;
 }
-.post_emojis_wrap i:hover {
-  filter: invert(80%);
+
+/* .comment_emoji_picker {
+  position: absolute;
+  right: 0;
+} */
+
+.emoji_icon_large {
+  cursor: pointer;
 }
+
+.moveleft {
+  transform: translateX(-10px);
+}
+/* .post_emojis_wrap i:hover {
+  filter: invert(80%);
+} */
 .comment_emoji_picker {
   position: absolute;
   right: 0;
-  bottom: 2.5rem;
+  /* bottom: 2.5rem; */
 }
-.rlmove {
-  right: -7rem;
-}
+
 .addtoyourpost {
   display: flex;
   align-items: center;
