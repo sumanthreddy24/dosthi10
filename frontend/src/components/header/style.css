@@ -32,6 +32,10 @@ header {
       transform: rotateY(360deg)
   }
 }
+.header_logo img {
+  width: 50px; /* Adjust the width to your preference */
+  height: 35px; /* Maintain aspect ratio */
+}
 
 /*---Header left-----*/
 .header_left {

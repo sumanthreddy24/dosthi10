@@ -16,6 +16,7 @@ export default function PostMenu({
   setCheckSaved,
   images,
   postRef,
+  
 }) {
   const [test, setTest] = useState(postUserId === userId ? true : false);
   const menu = useRef(null);
@@ -28,10 +29,18 @@ export default function PostMenu({
   };
   
   const deleteHandler = async () => {
+    console.log("postUserId:", postUserId);
+    console.log("userId:", userId);
+  
+    if (postUserId !== userId) {
+      window.alert("You can only delete your own posts.");
+      return;
+    }
+  
     const res = await deletePost(postId, token);
     if (res.status === "ok") {
       postRef.current.remove();
-      console.log("deleted")
+      console.log("deleted");
     }
   };
   
@@ -50,53 +59,30 @@ export default function PostMenu({
 
   return (
     <ul className="post_menu" ref={menu}>
-      {test && <MenuItem icon="pin_icon" title="Pin Post" />}
+      
       
       <div className="line"></div>
       
-      {test && <MenuItem icon="edit_icon" title="Edit Post" />}
       
-      {!test && (
-        <MenuItem
-          icon="turnOnNotification_icon"
-          title="Turn on notifications for this post"
-        />
-      )}
+      
+      
       
       {imagesLength && (
         <div onClick={() => downloadImages()}>
-          <MenuItem icon="download_icon" title="Download" />
+          <MenuItem  title="Download" />
         </div>
       )}
       
-      {imagesLength && (
-        <MenuItem icon="fullscreen_icon" title="Enter Fullscreen" onClick={enterFullScreen} />
-      )}
+     
       
-      {test && <MenuItem img="../../../icons/lock.png" title="Edit audience" />}
+     
       
-      {test && (
-        <MenuItem
-          icon="turnOffNotifications_icon"
-          title="Turn off notifications for this post"
-        />
-      )}
-      
-      {test && <MenuItem icon="delete_icon" title="Turn off translations" />}
-      
-      {test && <MenuItem icon="date_icon" title="Edit Date" />}
-      
-      {test && (
-        <MenuItem icon="refresh_icon" title="Refresh share attachment" />
-      )}
-      
-      {test && <MenuItem icon="archive_icon" title="Move to archive" />}
       
       <div onClick={() => deleteHandler()}>
         <MenuItem
           icon="trash_icon"
-          title="Move to trash"
-          subtitle="items in your trash are deleted after 30 days"
+          title="Delete Post"
+         
         />
       </div>
       

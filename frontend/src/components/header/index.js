@@ -5,17 +5,16 @@ import IconButton from "@mui/material/IconButton";
 import Tooltip from "@mui/material/Tooltip";
 import PeopleAltIcon from "@mui/icons-material/PeopleAlt";
 import SportsEsportsIcon from "@mui/icons-material/SportsEsports";
-import VideoCameraBackIcon from "@mui/icons-material/VideoCameraBack";
+import ForumIcon from "@mui/icons-material/Forum";
 import logo from "./DOSTHI.png";
-import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
-import SearchIcon from '@mui/icons-material/Search';
+import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
+import SearchIcon from "@mui/icons-material/Search";
 import { useSelector } from "react-redux";
 import SearchMenu from "./SearchMenu";
 import { useRef, useState } from "react";
 import useClickOutside from "../../helpers/clickOutside";
 import UserMenu from "./userMenu";
-import ForumIcon from '@mui/icons-material/Forum';
-
+import gif from './gif.gif';
 export default function Header() {
   const { user } = useSelector((user) => ({ ...user }));
   const color = "#65676b";
@@ -26,20 +25,29 @@ export default function Header() {
   useClickOutside(usermenu, () => {
     setShowUserMenu(false);
   });
+
+  const scrollToTop = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth"
+    });
+  };
+
   return (
     <header>
       <div className="header_left">
-        <Link to="/" className="header_logo">
-          <div className="circle">
-          <div className="waviy">
-          <span style={{ "--i": 1 }}>D</span>
-          <span style={{ "--i": 2 }}>O</span>
-          <span style={{ "--i": 3 }}>S</span>
-          <span style={{ "--i": 4 }}>T</span>
-          <span style={{ "--i": 5 }}>H</span>
-          <span style={{ "--i": 6 }}>I</span>
-        </div>
-          </div>
+        <Link to="/" className="header_logo" onClick={scrollToTop}>
+          {/* <div className="circle">
+            <div className="waviy">
+              <span style={{ "--i": 1 }}>D</span>
+              <span style={{ "--i": 2 }}>O</span>
+              <span style={{ "--i": 3 }}>S</span>
+              <span style={{ "--i": 4 }}>T</span>
+              <span style={{ "--i": 5 }}>H</span>
+              <span style={{ "--i": 6 }}>I</span>
+            </div>
+          </div> */}
+           <img src={gif} alt="Logo" />
         </Link>
         <div
           className="search search1"
@@ -47,7 +55,7 @@ export default function Header() {
             setShowSearchMenu(true);
           }}
         >
-          <SearchIcon sx={{ color: '#ff7043 ' }} />
+          <SearchIcon sx={{ color: "#ff7043 " }} />
           <input
             type="text"
             placeholder="Search Dosthi"
@@ -63,16 +71,16 @@ export default function Header() {
         />
       )}
       <div className="header_middle">
-        <Link to="/" className="middle_icon hover1">
+        <Link to="/" className="middle_icon hover1" onClick={scrollToTop}>
           <Tooltip title="Home">
-            <IconButton sx={{ color: '#ff7043 ' }} >
+            <IconButton sx={{ color: "#ff7043 " }}>
               <HomeIcon sx={{ fontSize: 40 }} />
             </IconButton>
           </Tooltip>
         </Link>
         <Link to="/friends" className="middle_icon hover1">
           <Tooltip title="Friends">
-            <IconButton sx={{ color: '#ff7043 ' }} >
+            <IconButton sx={{ color: "#ff7043 " }}>
               <PeopleAltIcon sx={{ fontSize: 40 }} />
             </IconButton>
           </Tooltip>
@@ -80,25 +88,18 @@ export default function Header() {
 
         <Link to="/games" className="middle_icon hover1 ">
           <Tooltip title="Games">
-            <IconButton  sx={{ color: '#ff7043 ' }} >
+            <IconButton sx={{ color: "#ff7043 " }}>
               <SportsEsportsIcon sx={{ fontSize: 40 }} />
             </IconButton>
           </Tooltip>
         </Link>
-        {/* <Link to="/" className="middle_icon hover1 ">
-          <Tooltip title="Videos">
-            <IconButton sx={{ color: '#ff7043 ' }} >
-              <VideoCameraBackIcon sx={{ fontSize: 40 }} />
-            </IconButton>
-          </Tooltip>
-        </Link> */}
+        
         <Link to={"/messenger"} className="middle_icon hover1 " >
           <Tooltip title="Message">
             <IconButton sx={{ color: '#ff7043 ' }} >
               <ForumIcon sx={{ fontSize: 35 }} />
             </IconButton>
           </Tooltip>
-
         </Link>
       </div>
       <div className="header_right">

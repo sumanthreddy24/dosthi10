@@ -611,3 +611,30 @@
     height: 450px !important;
   }
 }
+/* style.css */
+
+.loader-container {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%; /* Adjust this height according to your layout */
+}
+
+.loader {
+  width: 50px; /* Adjust the size of the loader */
+  height: 50px; /* Adjust the size of the loader */
+  border-radius: 50%;
+  border: 5px solid #f3f3f3; /* Light grey border */
+  border-top: 5px solid #3498db; /* Blue border on top */
+  animation: spin 1s linear infinite; /* Apply rotation animation */
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
